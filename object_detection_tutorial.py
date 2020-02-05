@@ -162,7 +162,30 @@ def show_inference(model, image_path):
 
   #display(Image.fromarray(image_np))	## for jupyter notebook
   Image.fromarray(image_np).show()
+  #print(output_dict['detection_boxes'])
+  #print(output_dict['detection_classes'])
+  #print(output_dict['detection_scores'])
 
+  # classes = output_dict['detection_classes']
+  # scores = output_dict['detection_scores']
+  # objects = []
+  
+  # for index,value in enumerate (classes):
+    # object_dict = {}
+    # if scores[index] > 0.5:
+      # object_dict[(category_index.get(value).get('name').encode('utf8'))] = scores[index]
+      # objects.append(object_dict)
+  # print(objects)
+  
+  boxes = output_dict['detection_boxes']
+  classes = output_dict['detection_classes']
+  scores = output_dict['detection_scores']
+  
+  for i in range(boxes.shape[0]):
+    class_name = category_index[classes[i]]['name']
+    if scores[i] > 0.5:
+      print(class_name)
+  
 # ============================================================
 # # Iterate through test images
 # ============================================================
