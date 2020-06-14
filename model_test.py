@@ -85,6 +85,7 @@ def load_model(model_name):
 # Label maps map indices to category names, so that when our convolution network predicts `5`, we know that this corresponds to `airplane`.  Here we use internal utility functions, but anything that returns a dictionary mapping integers to appropriate string labels would be fine
 
 # List of the strings that is used to add correct label for each box.
+PATH_TO_OUTPUT = 'models/test_results/'
 PATH_TO_LABELS = 'models/data/label_map.pbtxt'
 category_index = label_map_util.create_category_index_from_labelmap(PATH_TO_LABELS, use_display_name=True)
 
@@ -169,17 +170,34 @@ def show_inference(model, image_path):
       category_index,
       instance_masks=output_dict.get('detection_masks_reframed', None),
       use_normalized_coordinates=True,
+	  min_score_thresh=.25,
       line_thickness=8)
 
   #display(Image.fromarray(image_np))	## for jupyter notebook
   Image.fromarray(image_np).show()
+  
+  imgOut = Image.fromarray(image_np)
+  imName = str(counter) + '.jpg'
+  imgOut.save(PATH_TO_OUTPUT + imName, 'JPEG')
+  
+  boxes = output_dict['detection_boxes']
+  scores = output_dict['detection_scores']
+  classes = output_dict['detection_classes']
+  
+  for i in range(boxes.shape[0]):
+    if scores[i] > 0.25:
+	    class_name = category_index[classes[i]]['name']
+	    print("Inference ", i, ": class- ", class_name, "  score- ", scores[i])
 
 
 # ============================================================
 # # Iterate through test images
 # ============================================================
+counter = 1
 for image_path in TEST_IMAGE_PATHS:
+  print("Processing Image ", counter)
   show_inference(detection_model, image_path)
+  counter = counter + 1
 
   
 # ============================================================
